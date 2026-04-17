@@ -1,0 +1,203 @@
+/* ══════════════════════════════════════════════════════════════
+   WoW Stream Overlay — Styles Partagés
+   Importé par tous les overlays via <link rel="stylesheet">
+   ══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* ── CSS VARIABLES ── */
+:root {
+  --gold:        #ffd700;
+  --gold-mid:    #e8aa00;
+  --gold-dark:   #c8920a;
+  --gold-dim:    #7a5500;
+  --gold-faint:  rgba(200,160,0,0.12);
+  --gold-glow:   rgba(200,160,0,0.5);
+
+  --purple:      #9060ff;
+  --purple-dim:  rgba(144,96,255,0.15);
+
+  --horde:       #cc2200;
+  --alliance:    #0055cc;
+
+  --bg-void:     #050308;
+  --bg-deep:     #080510;
+  --bg-dark:     #0d0818;
+
+  --text-gold:   #d4b060;
+  --text-bright: #fff5c0;
+  --text-dim:    rgba(212,176,96,0.45);
+
+  --border:      rgba(200,160,0,0.2);
+  --border-mid:  rgba(200,160,0,0.45);
+  --border-hi:   rgba(200,160,0,0.8);
+
+  --font-display: 'Cinzel Decorative', serif;
+  --font-ui:      'Cinzel', serif;
+  --font-body:    'Rajdhani', sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── BASE OVERLAY BODY ── */
+body.overlay {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--font-body);
+  position: relative;
+}
+
+/* ── GLOBAL BACKGROUND ── */
+.bg {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+
+.bg-base {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(80,40,0,0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 15% 85%, rgba(200,140,0,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 85% 15%, rgba(144,96,255,0.08) 0%, transparent 60%),
+    linear-gradient(170deg, rgba(0,0,0,0.97) 0%, rgba(8,5,16,0.93) 50%, rgba(0,0,0,0.98) 100%);
+}
+
+/* ── BORDERS ── */
+.border-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold-dim) 10%,
+    var(--gold-mid) 35%,
+    var(--gold) 50%,
+    var(--gold-mid) 65%,
+    var(--gold-dim) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 24px var(--gold-glow), 0 0 60px rgba(200,160,0,0.15);
+}
+
+.border-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold-dim) 10%,
+    var(--gold-mid) 35%,
+    var(--gold) 50%,
+    var(--gold-mid) 65%,
+    var(--gold-dim) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 -4px 24px var(--gold-glow), 0 -1px 60px rgba(200,160,0,0.1);
+}
+
+/* ── CORNER ORNAMENTS ── */
+.corners { position: absolute; inset: 0; pointer-events: none; }
+
+.corner {
+  position: absolute;
+  width: 100px; height: 100px;
+}
+.corner svg { width: 100%; height: 100%; }
+.corner-tl { top: 0; left: 0; }
+.corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+.corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.corner-br { bottom: 0; right: 0; transform: scale(-1); }
+
+/* ── SIDE WATERMARK ── */
+.watermark-l, .watermark-r {
+  position: absolute;
+  top: 50%;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.watermark-l {
+  left: 36px;
+  transform: translateY(-50%) rotate(-90deg);
+}
+.watermark-r {
+  right: 36px;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+/* ── PARTICLES ── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleRise linear infinite;
+  opacity: 0;
+}
+@keyframes particleRise {
+  0%   { transform: translateY(1100px) scale(0); opacity: 0; }
+  8%   { opacity: 0.9; transform: translateY(950px) scale(1); }
+  92%  { opacity: 0.3; }
+  100% { transform: translateY(-60px) scale(0.5); opacity: 0; }
+}
+
+/* ── DECO LINE ── */
+.deco-line {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px;
+}
+.deco-line-arm {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-mid));
+  flex: 1;
+  max-width: 240px;
+}
+.deco-line-arm.right {
+  background: linear-gradient(90deg, var(--border-mid), transparent);
+}
+.deco-line-gem {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--gold-glow), 0 0 4px rgba(255,215,0,0.9);
+  flex-shrink: 0;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(200,160,0,0.2); }
+  50%       { box-shadow: 0 0 50px rgba(200,160,0,0.6), 0 0 100px rgba(200,160,0,0.15); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+@keyframes scanline {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(100vh); }
+}
+@keyframes shimmer {
+  from { background-position: -400px 0; }
+  to   { background-position: 400px 0; }
+}
