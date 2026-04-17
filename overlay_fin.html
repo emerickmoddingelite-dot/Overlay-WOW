@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>WoW Overlay — Fin de Live</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── VIGNETTE ── */
+.vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%,
+    transparent 30%,
+    rgba(0,0,0,0.6) 80%,
+    rgba(0,0,0,0.9) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── TOP BANNER ── */
+.top-banner {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 1s 0.2s both;
+}
+.top-banner-text {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── CENTER SCENE ── */
+.scene {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── GOODBYE SYMBOL ── */
+.outro-symbol {
+  font-size: 60px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 30px rgba(200,150,0,0.5));
+  animation: fadeInScale 1.5s var(--ease-out-expo) 0.2s both;
+}
+
+/* ── TITLE ── */
+.fin-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  animation: fadeIn 1s 0.4s both;
+}
+
+.fin-title {
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: 3px;
+  background: linear-gradient(180deg,
+    #ffffff 0%,
+    #fff5c0 12%,
+    var(--gold) 36%,
+    var(--gold-dark) 64%,
+    var(--gold-dim) 86%,
+    #2a1800 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 50px rgba(200,150,0,0.4)) drop-shadow(0 6px 12px rgba(0,0,0,0.9));
+  margin-bottom: 24px;
+  animation: fadeInScale 1.2s var(--ease-out-expo) 0.2s both;
+}
+
+.deco-fin {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+  animation: fadeIn 1s 0.7s both;
+}
+.deco-fin-arm { height: 1px; width: 200px; }
+.deco-fin-arm.l { background: linear-gradient(90deg, transparent, var(--border-mid)); }
+.deco-fin-arm.r { background: linear-gradient(90deg, var(--border-mid), transparent); }
+.deco-fin-gem { width: 9px; height: 9px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 12px var(--gold-glow); }
+
+.fin-sub {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  color: var(--text-gold);
+  opacity: 0.75;
+  margin-bottom: 8px;
+  animation: fadeInUp 1s 0.8s both;
+}
+.fin-msg {
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 48px;
+  animation: fadeInUp 1s 0.9s both;
+}
+
+/* ── CTA ── */
+.cta-box {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--border-mid);
+  padding: 14px 48px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 56px;
+  animation: fadeInUp 1s 1s both, pulseGlow 3s 1.5s ease-in-out infinite;
+}
+
+/* ── SOCIAL CARDS ── */
+.social-cards {
+  display: flex;
+  gap: 16px;
+  animation: fadeInUp 1s 1.2s both;
+}
+.social-card {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+  padding: 20px 32px;
+  background: rgba(0,0,0,0.65);
+  border: 1px solid var(--border);
+  min-width: 200px;
+  position: relative;
+  transition: border-color 0.3s;
+}
+.social-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+.social-card-icon { font-size: 26px; }
+.social-card-value {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-gold);
+  letter-spacing: 1px;
+  text-align: center;
+}
+.social-card-label {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── SIDE TEXTS ── */
+.side-quote {
+  position: absolute;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0.4;
+  white-space: nowrap;
+  animation: fadeIn 2s 1.5s both;
+}
+.side-quote-l {
+  left: 36px; top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+}
+.side-quote-r {
+  right: 36px; top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+/* ── HIDE TIKTOK IF EMPTY ── */
+.social-card[data-cfg-show="socials.tiktok"] { }
+
+</style>
+</head>
+<body class="overlay">
+
+<div class="bg bg-base"></div>
+<div class="vignette"></div>
+
+<div class="border-top"></div>
+<div class="border-bottom"></div>
+<div class="corners">
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+</div>
+
+<div class="side-quote side-quote-l" data-cfg="overlays.fin.message">Gloire aux braves d'Azeroth</div>
+<div class="side-quote side-quote-r" data-cfg="overlays.fin.message">Gloire aux braves d'Azeroth</div>
+
+<div class="top-banner">
+  <div class="top-banner-text">World of Warcraft — Stream Terminé</div>
+</div>
+
+<div class="scene">
+  <div class="outro-symbol">🏆</div>
+  <div class="fin-eyebrow">Merci à tous les viewers</div>
+
+  <div class="fin-title" data-cfg="overlays.fin.titre">À BIENTÔT</div>
+
+  <div class="deco-fin">
+    <div class="deco-fin-arm l"></div>
+    <div class="deco-fin-gem"></div>
+    <div class="deco-fin-arm r"></div>
+  </div>
+
+  <div class="fin-sub" data-cfg="overlays.fin.sousTitre">Merci d'avoir regardé le live</div>
+  <div class="fin-msg" data-cfg="overlays.fin.message">Gloire aux braves d'Azeroth</div>
+
+  <div class="cta-box" data-cfg="overlays.fin.cta">Suivez pour ne rien manquer !</div>
+
+  <div class="social-cards">
+    <div class="social-card">
+      <span class="social-card-icon">🟣</span>
+      <span class="social-card-value" data-cfg="socials.twitch">twitch.tv/tonpseudo</span>
+      <span class="social-card-label">Twitch</span>
+    </div>
+    <div class="social-card">
+      <span class="social-card-icon">💜</span>
+      <span class="social-card-value" data-cfg="socials.discord">discord.gg/tonserveur</span>
+      <span class="social-card-label">Discord</span>
+    </div>
+    <div class="social-card">
+      <span class="social-card-icon">🐦</span>
+      <span class="social-card-value" data-cfg="socials.twitter">@tonpseudo</span>
+      <span class="social-card-label">Twitter / X</span>
+    </div>
+    <div class="social-card">
+      <span class="social-card-icon">📺</span>
+      <span class="social-card-value" data-cfg="socials.youtube">youtube.com/@tonpseudo</span>
+      <span class="social-card-label">YouTube</span>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>
