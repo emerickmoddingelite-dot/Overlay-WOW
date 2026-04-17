@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>WoW Overlay — En Jeu</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── HUD CORNERS ── */
+/* Top-left : Streamer info */
+.hud-tl {
+  position: absolute;
+  top: 24px; left: 24px;
+  display: flex; flex-direction: column; gap: 0;
+  animation: fadeInUp 0.8s var(--ease-out-expo) both;
+}
+
+.hud-nameplate {
+  display: flex; align-items: center;
+  gap: 14px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 100%);
+  border: 1px solid var(--border-mid);
+  border-right: none;
+  padding: 12px 20px;
+  position: relative;
+  min-width: 320px;
+}
+.hud-nameplate::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+}
+.hud-avatar {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold-dim));
+  border: 1px solid var(--border-mid);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.hud-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: 1px;
+}
+.hud-class {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.hud-server {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-right: none;
+  padding: 6px 20px 6px 56px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Top-right : Objectif ── */
+.hud-tr {
+  position: absolute;
+  top: 24px; right: 24px;
+  min-width: 360px;
+  animation: fadeInUp 0.8s 0.1s var(--ease-out-expo) both;
+}
+
+.obj-panel {
+  background: linear-gradient(270deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 100%);
+  border: 1px solid var(--border-mid);
+  border-left: none;
+  position: relative;
+}
+.obj-panel::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--purple), rgba(144,96,255,0.3));
+}
+.obj-header {
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.obj-dot {
+  width: 6px; height: 6px;
+  background: var(--purple);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--purple);
+  animation: blink 2s ease-in-out infinite;
+}
+.obj-label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.obj-body {
+  padding: 12px 20px;
+}
+.obj-line1 {
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+.obj-line2 {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-gold);
+  letter-spacing: 1px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+/* ── BOTTOM BAR ── */
+.hud-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  align-items: stretch;
+  animation: fadeInUp 0.8s 0.2s var(--ease-out-expo) both;
+}
+
+.bottom-twitch {
+  display: flex; align-items: center;
+  gap: 12px;
+  background: rgba(0,0,0,0.82);
+  border-top: 1px solid var(--border-mid);
+  border-right: 1px solid var(--border);
+  padding: 0 28px;
+  min-width: 320px;
+}
+.twitch-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px rgba(145,71,255,0.6));
+}
+.twitch-text {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-gold);
+}
+
+.bottom-commands {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  background: rgba(0,0,0,0.72);
+  border-top: 1px solid var(--border);
+}
+.cmd-item {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px 10px;
+  border-right: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  transition: color 0.3s;
+}
+.cmd-item:last-child { border-right: none; }
+
+.bottom-server {
+  display: flex; align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.82);
+  border-top: 1px solid var(--border-mid);
+  border-left: 1px solid var(--border);
+  padding: 0 28px;
+  min-width: 320px;
+  justify-content: flex-end;
+}
+.server-text {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: right;
+}
+.server-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-gold);
+  display: block;
+}
+
+/* ── MINI DECO LINES on sides ── */
+.side-deco {
+  position: absolute;
+  top: 140px; bottom: 90px;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--border) 30%,
+    var(--border) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
+.side-deco-l { left: 22px; }
+.side-deco-r { right: 22px; }
+
+/* ── GUILD TAG ── */
+.guild-tag {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0.35;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeIn 2s 1s both;
+}
+
+</style>
+</head>
+<body class="overlay">
+
+<div class="bg bg-base" style="opacity:0.6;"></div>
+<div class="border-top"></div>
+<div class="border-bottom" style="display:none;"></div>
+
+<div class="side-deco side-deco-l"></div>
+<div class="side-deco side-deco-r"></div>
+
+<div class="guild-tag" data-cfg="streamer.guilde" data-cfg-show="streamer.guilde"></div>
+
+<!-- TOP LEFT : Streamer -->
+<div class="hud-tl">
+  <div class="hud-nameplate">
+    <div class="hud-avatar" style="padding:0;overflow:hidden;"><img src="https://i.ibb.co/LzQ5ggjZ/Draethon.png" alt="avatar" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+    <div>
+      <div class="hud-name" data-cfg="streamer.pseudo">TonPseudo</div>
+      <div class="hud-class" data-cfg="streamer.classe">Démoniste</div>
+    </div>
+  </div>
+  <div class="hud-server">
+    <span data-cfg="streamer.serveur">Ysondre — EU</span>
+  </div>
+</div>
+
+<!-- TOP RIGHT : Objectif -->
+<div class="hud-tr">
+  <div class="obj-panel">
+    <div class="obj-header">
+      <div class="obj-dot"></div>
+      <span class="obj-label" data-cfg="overlays.enjeu.objectifTitre">Objectif</span>
+    </div>
+    <div class="obj-body">
+      <div class="obj-line1" data-cfg="overlays.enjeu.objectifLigne1">Mythic+ niveau 15</div>
+      <div class="obj-line2" data-cfg="overlays.enjeu.objectifLigne2">Donjon : Le Nid de Vipères</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="hud-bottom">
+  <div class="bottom-twitch">
+    <span class="twitch-icon">🟣</span>
+    <span class="twitch-text" data-cfg="socials.twitch">twitch.tv/tonpseudo</span>
+  </div>
+
+  <div class="bottom-commands">
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.0">!build</div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.1">!discord</div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.2">!social</div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.3">!commandes</div>
+  </div>
+
+  <div class="bottom-server">
+    <div class="server-text">
+      <span class="server-name" data-cfg="streamer.guilde" data-cfg-show="streamer.guilde"></span>
+      <span data-cfg="streamer.serveur">Ysondre — EU</span>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>
