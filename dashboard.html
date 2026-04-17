@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WoW Stream — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #ffd700;
+  --gold-mid: #e8aa00;
+  --gold-dark: #c8920a;
+  --gold-dim: #7a5500;
+  --gold-faint: rgba(200,160,0,0.1);
+  --gold-glow: rgba(200,160,0,0.45);
+  --purple: #9060ff;
+  --green: #40e080;
+  --red: #ff4040;
+  --bg: #060410;
+  --bg2: #0c0820;
+  --bg3: #110c28;
+  --panel-bg: rgba(12,8,28,0.96);
+  --border: rgba(200,160,0,0.18);
+  --border-mid: rgba(200,160,0,0.4);
+  --text: #d4b060;
+  --text-bright: #fff5c0;
+  --text-dim: rgba(212,176,96,0.42);
+  --font-d: 'Cinzel Decorative', serif;
+  --font-ui: 'Cinzel', serif;
+  --font-b: 'Rajdhani', sans-serif;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-b);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(144,96,255,0.055) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(200,146,0,0.055) 0%, transparent 70%);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 3px; }
+
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(6,4,16,0.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo-badge {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold-dim));
+  border: 1px solid var(--gold-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 16px rgba(200,146,0,0.35);
+}
+.logo-name {
+  font-family: var(--font-d);
+  font-size: 15px;
+  background: linear-gradient(90deg, var(--gold), #fff5c0, var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.logo-tagline {
+  font-family: var(--font-ui);
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--text-dim); margin-top: 1px;
+  text-transform: uppercase;
+}
+
+.header-pills { display: flex; align-items: center; gap: 10px; }
+.pill {
+  padding: 6px 16px;
+  font-family: var(--font-ui);
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer; transition: all 0.2s;
+  background: none;
+}
+.pill:hover { border-color: var(--border-mid); color: var(--text); }
+.pill.active { border-color: var(--gold-dark); color: var(--gold); background: var(--gold-faint); }
+
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr 280px;
+  gap: 0;
+  min-height: calc(100vh - 64px);
+}
+
+/* ══════════════════════════════════════════
+   SIDEBARS
+══════════════════════════════════════════ */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 24px 20px;
+  display: flex; flex-direction: column; gap: 16px;
+  overflow-y: auto; max-height: calc(100vh - 64px);
+  position: sticky; top: 64px;
+}
+.sidebar-right {
+  border-left: 1px solid var(--border);
+  border-right: none;
+  padding: 24px 20px;
+  display: flex; flex-direction: column; gap: 16px;
+  overflow-y: auto; max-height: calc(100vh - 64px);
+  position: sticky; top: 64px;
+}
+
+/* ══════════════════════════════════════════
+   PANELS
+══════════════════════════════════════════ */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.panel-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(200,160,0,0.04);
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-head-icon { font-size: 14px; }
+.panel-head-title {
+  font-family: var(--font-ui);
+  font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold-mid);
+}
+.panel-body { padding: 16px; }
+
+/* ══════════════════════════════════════════
+   OVERLAY BUTTONS
+══════════════════════════════════════════ */
+.overlay-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.ov-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 14px 10px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  cursor: pointer; text-decoration: none;
+  color: var(--text); transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.ov-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(200,160,0,0.04), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+.ov-btn:hover { transform: translateY(-2px); }
+.ov-btn:hover::after { opacity: 1; }
+.ov-btn.debut  { border-color: rgba(64,224,128,0.25); }
+.ov-btn.enjeu  { border-color: rgba(255,215,0,0.25); }
+.ov-btn.pause  { border-color: rgba(144,96,255,0.25); }
+.ov-btn.fin    { border-color: rgba(255,80,80,0.25); }
+.ov-btn.debut:hover  { border-color: rgba(64,224,128,0.6); }
+.ov-btn.enjeu:hover  { border-color: rgba(255,215,0,0.6); }
+.ov-btn.pause:hover  { border-color: rgba(144,96,255,0.6); }
+.ov-btn.fin:hover    { border-color: rgba(255,80,80,0.6); }
+.ov-btn-icon { font-size: 20px; }
+.ov-btn-label {
+  font-family: var(--font-ui);
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase; text-align: center;
+}
+.ov-btn-sub { font-size: 9px; color: var(--text-dim); }
+
+/* ══════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════ */
+.main {
+  padding: 28px 32px;
+  overflow-y: auto;
+}
+
+/* ── SECTION HEADER ── */
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.section-bar { width: 3px; height: 20px; background: var(--gold); }
+.section-title {
+  font-family: var(--font-ui);
+  font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold-mid);
+}
+
+/* ── FORM ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-family: var(--font-ui);
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.field input, .field select {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  font-family: var(--font-b);
+  font-size: 14px; font-weight: 500;
+  color: var(--text);
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 2px rgba(200,146,0,0.12);
+}
+.field input::placeholder { color: var(--text-dim); font-weight: 400; }
+.field select option { background: #0c0820; }
+
+.spacer { height: 24px; border-top: 1px solid var(--border); margin: 8px 0; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px;
+  font-family: var(--font-ui);
+  font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  border: 1px solid; cursor: pointer; transition: all 0.2s;
+  background: none; white-space: nowrap;
+}
+.btn-gold { border-color: var(--gold-dark); color: var(--gold); background: rgba(200,146,0,0.08); }
+.btn-gold:hover { background: rgba(200,146,0,0.2); box-shadow: 0 0 24px rgba(200,146,0,0.25); }
+.btn-ghost { border-color: var(--border); color: var(--text-dim); font-size: 9px; padding: 11px 18px; }
+.btn-ghost:hover { border-color: var(--border-mid); color: var(--text); }
+.btn-green { border-color: rgba(64,224,128,0.4); color: var(--green); background: rgba(64,224,128,0.06); }
+.btn-green:hover { background: rgba(64,224,128,0.15); }
+
+/* ── TABS OVERLAY ── */
+.ov-tabs {
+  display: flex; gap: 3px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  padding: 4px;
+  margin-bottom: 24px;
+}
+.ov-tab {
+  flex: 1; padding: 9px 14px;
+  font-family: var(--font-ui);
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim);
+  background: none; border: none; cursor: pointer; transition: all 0.2s;
+}
+.ov-tab:hover { color: var(--text); }
+.ov-tab.active { color: var(--gold); background: var(--gold-faint); }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ══════════════════════════════════════════
+   PREVIEW
+══════════════════════════════════════════ */
+.preview-panel { }
+.preview-wrap {
+  background: #000;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+.preview-viewport {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.preview-viewport iframe {
+  width: 1920px; height: 1080px;
+  border: none;
+  transform-origin: top left;
+  display: block;
+}
+.preview-controls {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  background: rgba(0,0,0,0.5);
+}
+.preview-name {
+  font-family: var(--font-ui);
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.preview-arrows { display: flex; gap: 4px; }
+.arrow-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  color: var(--text-dim); cursor: pointer;
+  font-size: 12px; transition: all 0.2s;
+}
+.arrow-btn:hover { border-color: var(--border-mid); color: var(--text); }
+
+/* ══════════════════════════════════════════
+   URL BOXES
+══════════════════════════════════════════ */
+.url-box {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--border);
+  padding: 9px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px; color: var(--text-dim);
+  word-break: break-all; line-height: 1.5;
+  cursor: pointer; transition: border-color 0.2s;
+  position: relative; margin-top: 6px;
+}
+.url-box:hover { border-color: var(--border-mid); color: var(--text); }
+.url-copied {
+  position: absolute; top: 6px; right: 8px;
+  font-family: var(--font-ui); font-size: 9px;
+  letter-spacing: 2px; color: var(--green);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.url-box.copied .url-copied { opacity: 1; }
+.url-tag {
+  font-family: var(--font-ui);
+  font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-dim); margin-top: 10px; margin-bottom: 2px;
+  display: block;
+}
+.url-tag:first-child { margin-top: 0; }
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: rgba(8,5,20,0.96);
+  border: 1px solid var(--gold-dark);
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-ui);
+  font-size: 11px; letter-spacing: 2px; color: var(--gold);
+  transform: translateY(60px); opacity: 0;
+  transition: all 0.3s var(--ease);
+  z-index: 999; pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(200,146,0,0.1);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════════════
+   INFO BOX
+══════════════════════════════════════════ */
+.info-box {
+  background: rgba(144,96,255,0.05);
+  border: 1px solid rgba(144,96,255,0.2);
+  padding: 14px 16px;
+  font-size: 12px;
+  color: rgba(200,180,255,0.65);
+  line-height: 1.7;
+}
+.info-box strong { color: rgba(200,180,255,0.9); font-weight: 600; }
+.info-box code {
+  background: rgba(144,96,255,0.15);
+  padding: 1px 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px; color: #c0a0ff;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-badge">⚔</div>
+    <div>
+      <div class="logo-name">WoW Stream Overlay</div>
+      <div class="logo-tagline">Panneau de Contrôle — OBS / StreamLabs</div>
+    </div>
+  </div>
+  <div class="header-pills">
+    <button class="pill active" onclick="switchMain('config', this)">⚙ Config</button>
+    <button class="pill" onclick="switchMain('guide', this)">📖 Guide</button>
+  </div>
+</header>
+
+<!-- ══════════════ LAYOUT ══════════════ -->
+<div class="layout">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <!-- Ouvrir overlays -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-head-icon">🖥</span>
+        <span class="panel-head-title">Overlays</span>
+      </div>
+      <div class="panel-body">
+        <div class="overlay-btns">
+          <a class="ov-btn debut" id="lnk-debut" href="overlay_debut.html" target="_blank">
+            <span class="ov-btn-icon">🟢</span>
+            <span class="ov-btn-label">Début</span>
+            <span class="ov-btn-sub">Intro</span>
+          </a>
+          <a class="ov-btn enjeu" id="lnk-enjeu" href="overlay_enjeu.html" target="_blank">
+            <span class="ov-btn-icon">⚔️</span>
+            <span class="ov-btn-label">En Jeu</span>
+            <span class="ov-btn-sub">HUD</span>
+          </a>
+          <a class="ov-btn pause" id="lnk-pause" href="overlay_pause.html" target="_blank">
+            <span class="ov-btn-icon">⏸️</span>
+            <span class="ov-btn-label">Pause</span>
+            <span class="ov-btn-sub">BRB</span>
+          </a>
+          <a class="ov-btn fin" id="lnk-fin" href="overlay_fin.html" target="_blank">
+            <span class="ov-btn-icon">🔴</span>
+            <span class="ov-btn-label">Fin</span>
+            <span class="ov-btn-sub">Outro</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview selector -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-head-icon">👁</span>
+        <span class="panel-head-title">Aperçu rapide</span>
+      </div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:6px;">
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="setPreview('debut')">🟢 Début de Live</button>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="setPreview('enjeu')">⚔️ En Jeu</button>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="setPreview('pause')">⏸️ Pause</button>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="setPreview('fin')">🔴 Fin de Live</button>
+      </div>
+    </div>
+
+    <!-- Apply -->
+    <div class="panel">
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;">
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="apply()">✦ Générer les URLs</button>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="resetForm()">↺ Réinitialiser</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main" id="main-config">
+
+    <!-- TABS -->
+    <div class="ov-tabs">
+      <button class="ov-tab active" onclick="switchTab('general', this)">⚙ Général</button>
+      <button class="ov-tab" onclick="switchTab('debut', this)">🟢 Début</button>
+      <button class="ov-tab" onclick="switchTab('enjeu', this)">⚔ En Jeu</button>
+      <button class="ov-tab" onclick="switchTab('pause', this)">⏸ Pause</button>
+      <button class="ov-tab" onclick="switchTab('fin', this)">🔴 Fin</button>
+    </div>
+
+    <!-- ── TAB : GÉNÉRAL ── -->
+    <div class="tab-pane active" id="tp-general">
+      <div class="section-head">
+        <div class="section-bar"></div>
+        <div class="section-title">Identité du Streamer</div>
+      </div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Pseudo affiché</label><input id="f-pseudo" type="text" placeholder="TonPseudo" oninput="liveUpdate()"></div>
+        <div class="field"><label>Guilde</label><input id="f-guilde" type="text" placeholder="&lt;Nom de Guilde&gt;" oninput="liveUpdate()"></div>
+        <div class="field"><label>Serveur WoW</label><input id="f-serveur" type="text" placeholder="Ysondre — EU" oninput="liveUpdate()"></div>
+        <div class="field"><label>Classe WoW</label><input id="f-classe" type="text" placeholder="Démoniste" oninput="liveUpdate()"></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Faction</label>
+          <select id="f-faction" onchange="liveUpdate()">
+            <option value="horde">Horde 🔴</option>
+            <option value="alliance">Alliance 🔵</option>
+          </select>
+        </div>
+        <div class="field"><label>Contenu du live</label><input id="f-contenu" type="text" placeholder="Mythic+ / PvP" oninput="liveUpdate()"></div>
+      </div>
+
+      <div class="spacer"></div>
+      <div class="section-head">
+        <div class="section-bar"></div>
+        <div class="section-title">Réseaux Sociaux</div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>🟣 Twitch</label><input id="f-twitch" type="text" placeholder="twitch.tv/tonpseudo" oninput="liveUpdate()"></div>
+        <div class="field"><label>💜 Discord</label><input id="f-discord" type="text" placeholder="discord.gg/tonserveur" oninput="liveUpdate()"></div>
+        <div class="field"><label>🐦 Twitter / X</label><input id="f-twitter" type="text" placeholder="@tonpseudo" oninput="liveUpdate()"></div>
+        <div class="field"><label>📺 YouTube</label><input id="f-youtube" type="text" placeholder="youtube.com/@tonpseudo" oninput="liveUpdate()"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB : DÉBUT ── -->
+    <div class="tab-pane" id="tp-debut">
+      <div class="section-head"><div class="section-bar"></div><div class="section-title">Overlay — Début de Live</div></div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Titre principal</label><input id="f-debut-titre" type="text" placeholder="LE LIVE COMMENCE" oninput="liveUpdate()"></div>
+        <div class="field"><label>Sous-titre</label><input id="f-debut-sub" type="text" placeholder="Prépare-toi au combat" oninput="liveUpdate()"></div>
+        <div class="field"><label>Tagline latérale</label><input id="f-debut-tag" type="text" placeholder="Azeroth Chronicles • Stream" oninput="liveUpdate()"></div>
+        <div class="field"><label>Badge "Live"</label><input id="f-debut-badge" type="text" placeholder="EN DIRECT" oninput="liveUpdate()"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB : EN JEU ── -->
+    <div class="tab-pane" id="tp-enjeu">
+      <div class="section-head"><div class="section-bar"></div><div class="section-title">Overlay — En Jeu</div></div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Objectif — Ligne 1</label><input id="f-enjeu-obj1" type="text" placeholder="Mythic+ niveau 15" oninput="liveUpdate()"></div>
+        <div class="field"><label>Objectif — Ligne 2</label><input id="f-enjeu-obj2" type="text" placeholder="Donjon : Le Nid de Vipères" oninput="liveUpdate()"></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="section-head"><div class="section-bar"></div><div class="section-title">Commandes Chat</div></div>
+      <div class="grid-4">
+        <div class="field"><label>Commande 1</label><input id="f-enjeu-cmd1" type="text" placeholder="!build" oninput="liveUpdate()"></div>
+        <div class="field"><label>Commande 2</label><input id="f-enjeu-cmd2" type="text" placeholder="!discord" oninput="liveUpdate()"></div>
+        <div class="field"><label>Commande 3</label><input id="f-enjeu-cmd3" type="text" placeholder="!social" oninput="liveUpdate()"></div>
+        <div class="field"><label>Commande 4</label><input id="f-enjeu-cmd4" type="text" placeholder="!commandes" oninput="liveUpdate()"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB : PAUSE ── -->
+    <div class="tab-pane" id="tp-pause">
+      <div class="section-head"><div class="section-bar"></div><div class="section-title">Overlay — Pause</div></div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Sous-titre</label><input id="f-pause-sub" type="text" placeholder="De retour dans un instant…" oninput="liveUpdate()"></div>
+        <div class="field"><label>Message</label><input id="f-pause-msg" type="text" placeholder="Prends un verre, on revient vite !" oninput="liveUpdate()"></div>
+        <div class="field"><label>Contenu carte</label><input id="f-pause-contenu" type="text" placeholder="Mythic+" oninput="liveUpdate()"></div>
+        <div class="field"><label>Timer BRB (secondes)</label><input id="f-pause-timer" type="text" placeholder="300 (= 5 min)" oninput="liveUpdate()"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB : FIN ── -->
+    <div class="tab-pane" id="tp-fin">
+      <div class="section-head"><div class="section-bar"></div><div class="section-title">Overlay — Fin de Live</div></div>
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="field"><label>Titre</label><input id="f-fin-titre" type="text" placeholder="À BIENTÔT" oninput="liveUpdate()"></div>
+        <div class="field"><label>Sous-titre</label><input id="f-fin-sub" type="text" placeholder="Merci d'avoir regardé le live" oninput="liveUpdate()"></div>
+        <div class="field"><label>Message / quote</label><input id="f-fin-msg" type="text" placeholder="Gloire aux braves d'Azeroth" oninput="liveUpdate()"></div>
+        <div class="field"><label>Call to action</label><input id="f-fin-cta" type="text" placeholder="Suivez pour ne rien manquer !" oninput="liveUpdate()"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── GUIDE PAGE (hidden) ── -->
+  <main class="main" id="main-guide" style="display:none;">
+    <div class="section-head"><div class="section-bar"></div><div class="section-title">Guide d'utilisation</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="info-box">
+        <strong>🌐 Hébergement Web (recommandé)</strong><br>
+        Dépose tous les fichiers dans un dossier sur <strong>GitHub Pages</strong>, <strong>Netlify</strong> ou <strong>Vercel</strong> (plan gratuit).<br>
+        Ouvre <code>dashboard.html</code> depuis ton domaine et génère tes URLs.
+      </div>
+      <div class="info-box">
+        <strong>💻 En local (OBS / StreamLabs)</strong><br>
+        Dépose le dossier sur ton PC. Dans OBS : <strong>Source → Navigateur</strong><br>
+        Colle le chemin local : <code>file:///C:/Overlays/wow_stream/overlay_debut.html?pseudo=Toi…</code><br>
+        Résolution : <code>1920 × 1080</code> — Coche <em>"Actualiser quand visible"</em>
+      </div>
+      <div class="info-box">
+        <strong>⚙ Personnalisation avancée</strong><br>
+        Modifie <code>config.js</code> pour changer les valeurs par défaut sans passer par le dashboard.<br>
+        Les paramètres URL écrasent toujours la config.<br>
+        Modifie <code>shared.css</code> pour changer les couleurs globalement via les variables CSS.
+      </div>
+      <div class="info-box">
+        <strong>⏱ Timer Pause</strong><br>
+        Ajoute <code>?brb_secs=300</code> à l'URL de l'overlay Pause pour régler le timer (en secondes).<br>
+        Exemple : <code>overlay_pause.html?brb_secs=600</code> = 10 minutes.
+      </div>
+    </div>
+  </main>
+
+  <!-- ── RIGHT SIDEBAR : URLs + Preview ── -->
+  <aside class="sidebar-right">
+
+    <!-- Preview -->
+    <div class="panel preview-panel">
+      <div class="panel-head">
+        <span class="panel-head-icon">👁</span>
+        <span class="panel-head-title">Aperçu</span>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-viewport" id="pvp">
+          <iframe id="pvf" src="overlay_debut.html" scrolling="no"></iframe>
+        </div>
+        <div class="preview-controls">
+          <span class="preview-name" id="pvname">DÉBUT DE LIVE</span>
+          <div class="preview-arrows">
+            <div class="arrow-btn" onclick="cyclePreview(-1)">◀</div>
+            <div class="arrow-btn" onclick="cyclePreview(1)">▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- URLs -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-head-icon">🔗</span>
+        <span class="panel-head-title">URLs OBS</span>
+      </div>
+      <div class="panel-body">
+        <span class="url-tag">🟢 Début</span>
+        <div class="url-box" id="url-debut" onclick="copyUrl(this)"><span class="url-copied">✓ Copié</span><span class="url-t">—</span></div>
+        <hr class="divider">
+        <span class="url-tag">⚔️ En Jeu</span>
+        <div class="url-box" id="url-enjeu" onclick="copyUrl(this)"><span class="url-copied">✓ Copié</span><span class="url-t">—</span></div>
+        <hr class="divider">
+        <span class="url-tag">⏸️ Pause</span>
+        <div class="url-box" id="url-pause" onclick="copyUrl(this)"><span class="url-copied">✓ Copié</span><span class="url-t">—</span></div>
+        <hr class="divider">
+        <span class="url-tag">🔴 Fin</span>
+        <div class="url-box" id="url-fin" onclick="copyUrl(this)"><span class="url-copied">✓ Copié</span><span class="url-t">—</span></div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span>✦</span><span id="toast-msg">Fait !</span></div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const OVERLAYS = [
+  { key: 'debut', file: 'overlay_debut.html', label: 'DÉBUT DE LIVE' },
+  { key: 'enjeu', file: 'overlay_enjeu.html', label: 'EN JEU' },
+  { key: 'pause', file: 'overlay_pause.html', label: 'PAUSE' },
+  { key: 'fin',   file: 'overlay_fin.html',   label: 'FIN DE LIVE' },
+];
+let pvIdx = 0;
+
+// ══════════════════════════════════════════
+// FORM → PARAMS
+// ══════════════════════════════════════════
+function getFormValues() {
+  const v = id => document.getElementById(id)?.value.trim() || '';
+  return {
+    pseudo:       v('f-pseudo'),
+    guilde:       v('f-guilde'),
+    serveur:      v('f-serveur'),
+    classe:       v('f-classe'),
+    faction:      v('f-faction'),
+    contenu:      v('f-contenu'),
+    twitch:       v('f-twitch'),
+    discord:      v('f-discord'),
+    twitter:      v('f-twitter'),
+    youtube:      v('f-youtube'),
+    debut_titre:  v('f-debut-titre'),
+    debut_sousTitre: v('f-debut-sub'),
+    debut_tagline: v('f-debut-tag'),
+    debut_badge:  v('f-debut-badge'),
+    enjeu_obj1:   v('f-enjeu-obj1'),
+    enjeu_obj2:   v('f-enjeu-obj2'),
+    enjeu_cmd1:   v('f-enjeu-cmd1'),
+    enjeu_cmd2:   v('f-enjeu-cmd2'),
+    enjeu_cmd3:   v('f-enjeu-cmd3'),
+    enjeu_cmd4:   v('f-enjeu-cmd4'),
+    pause_sousTitre: v('f-pause-sub'),
+    pause_message: v('f-pause-msg'),
+    pause_contenu: v('f-pause-contenu'),
+    brb_secs:     v('f-pause-timer'),
+    fin_titre:    v('f-fin-titre'),
+    fin_sousTitre: v('f-fin-sub'),
+    fin_message:  v('f-fin-msg'),
+    fin_cta:      v('f-fin-cta'),
+  };
+}
+
+function buildQuery(extra) {
+  const vals = { ...getFormValues(), ...(extra || {}) };
+  const p = new URLSearchParams();
+  for (const [k, v] of Object.entries(vals)) {
+    if (v) p.set(k, v);
+  }
+  return p.toString();
+}
+
+function buildUrl(file, extra) {
+  const base = window.location.href.replace(/dashboard\.html.*$/, '');
+  const q = buildQuery(extra);
+  return base + file + (q ? '?' + q : '');
+}
+
+// ══════════════════════════════════════════
+// UPDATE UI
+// ══════════════════════════════════════════
+function updateUrls() {
+  OVERLAYS.forEach(o => {
+    const el = document.getElementById('url-' + o.key);
+    const url = buildUrl(o.file);
+    if (el) el.querySelector('.url-t').textContent = url;
+    const lnk = document.getElementById('lnk-' + o.key);
+    if (lnk) lnk.href = url;
+  });
+}
+
+function updatePreview() {
+  const o = OVERLAYS[pvIdx];
+  document.getElementById('pvname').textContent = o.label;
+  document.getElementById('pvf').src = buildUrl(o.file);
+  scalePreview();
+}
+
+function scalePreview() {
+  const vp = document.getElementById('pvp');
+  const fr = document.getElementById('pvf');
+  if (!vp || !fr) return;
+  const w = vp.offsetWidth;
+  const scale = w / 1920;
+  vp.style.height = Math.round(1080 * scale) + 'px';
+  fr.style.transform = `scale(${scale})`;
+}
+
+function liveUpdate() {
+  updateUrls();
+  // Debounce preview update
+  clearTimeout(window._pvt);
+  window._pvt = setTimeout(updatePreview, 600);
+}
+
+function apply() {
+  updateUrls();
+  updatePreview();
+  showToast('URLs générées !');
+}
+
+function resetForm() {
+  document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+  document.getElementById('f-faction').value = 'horde';
+  liveUpdate();
+  showToast('Champs réinitialisés');
+}
+
+// ══════════════════════════════════════════
+// COPY
+// ══════════════════════════════════════════
+function copyUrl(el) {
+  const text = el.querySelector('.url-t').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 2000);
+    showToast('URL copiée !');
+  });
+}
+
+// ══════════════════════════════════════════
+// TABS & NAVIGATION
+// ══════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ov-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tp-' + name)?.classList.add('active');
+  btn.classList.add('active');
+}
+
+function switchMain(page, btn) {
+  document.getElementById('main-config').style.display = page === 'config' ? '' : 'none';
+  document.getElementById('main-guide').style.display  = page === 'guide'  ? '' : 'none';
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setPreview(key) {
+  pvIdx = OVERLAYS.findIndex(o => o.key === key);
+  updatePreview();
+}
+
+function cyclePreview(dir) {
+  pvIdx = (pvIdx + dir + OVERLAYS.length) % OVERLAYS.length;
+  updatePreview();
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('resize', scalePreview);
+window.addEventListener('load', () => {
+  updateUrls();
+  setTimeout(() => { scalePreview(); updatePreview(); }, 100);
+});
+</script>
+</body>
+</html>
