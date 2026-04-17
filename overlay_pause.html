@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>WoW Overlay — Pause</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+
+/* ── BG EXTRAS ── */
+.bg-rings {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  animation: ringPulse linear infinite;
+  opacity: 0;
+}
+@keyframes ringPulse {
+  0%   { transform: scale(0.3); opacity: 0.6; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.ring-1 { width: 400px; height: 400px; border-color: rgba(200,146,0,0.3); animation-duration: 5s; animation-delay: 0s; }
+.ring-2 { width: 400px; height: 400px; border-color: rgba(144,96,255,0.2); animation-duration: 5s; animation-delay: 1.6s; }
+.ring-3 { width: 400px; height: 400px; border-color: rgba(200,146,0,0.15); animation-duration: 5s; animation-delay: 3.2s; }
+
+/* ── LAYOUT ── */
+.scene {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+/* ── PAUSE TITLE ── */
+.pause-icon {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  animation: fadeIn 1s 0.3s both;
+}
+
+.pause-title {
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: 4px;
+  background: linear-gradient(180deg,
+    #ffffff 0%,
+    #fff5c0 12%,
+    var(--gold) 35%,
+    var(--gold-dark) 62%,
+    var(--gold-dim) 85%,
+    #2a1800 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 50px rgba(200,150,0,0.4)) drop-shadow(0 8px 16px rgba(0,0,0,0.95));
+  animation: fadeInScale 1.2s var(--ease-out-expo) 0.1s both;
+  margin-bottom: 28px;
+}
+
+.deco-mid {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+  animation: fadeIn 1s 0.6s both;
+}
+.deco-mid-arm {
+  height: 1px; width: 160px;
+  background: linear-gradient(90deg, transparent, var(--border-mid));
+}
+.deco-mid-arm.r { background: linear-gradient(90deg, var(--border-mid), transparent); }
+.deco-mid-gem { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 12px var(--gold-glow); }
+
+.pause-sub {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--text-gold);
+  opacity: 0.75;
+  margin-bottom: 12px;
+  animation: fadeInUp 1s 0.7s both;
+}
+.pause-msg {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 52px;
+  animation: fadeInUp 1s 0.8s both;
+}
+
+/* ── CARDS ── */
+.cards {
+  display: flex;
+  gap: 20px;
+  animation: fadeInUp 1s 1s both;
+}
+
+.card {
+  background: rgba(0,0,0,0.65);
+  border: 1px solid var(--border);
+  min-width: 180px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+.card-inner { padding: 18px 24px; }
+.card-label {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.card-value {
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+/* Timer card special */
+.card-timer .card-value {
+  font-size: 32px;
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  color: var(--text-bright);
+}
+
+/* ── BOTTOM SOCIALS ── */
+.socials-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0;
+  background: rgba(0,0,0,0.75);
+  border-top: 1px solid var(--border);
+  animation: fadeIn 1s 1.3s both;
+}
+.social-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 48px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text-gold);
+}
+.social-sep {
+  width: 1px; height: 32px;
+  background: linear-gradient(180deg, transparent, var(--border-mid), transparent);
+}
+.social-icon { font-size: 16px; }
+
+/* ── CORNER MINI CLOCKS ── */
+.mini-info {
+  position: absolute;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  animation: fadeIn 2s 1.5s both;
+}
+.mini-tl { top: 28px; left: 130px; }
+.mini-tr { top: 28px; right: 130px; text-align: right; }
+
+</style>
+</head>
+<body class="overlay">
+
+<div class="bg bg-base"></div>
+
+<!-- Animated rings -->
+<div class="bg-rings">
+  <div class="ring ring-1"></div>
+  <div class="ring ring-2"></div>
+  <div class="ring ring-3"></div>
+</div>
+
+<div class="border-top"></div>
+<div class="border-bottom"></div>
+<div class="corners">
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+</div>
+<div class="watermark-l" data-cfg="streamer.pseudo">TonPseudo</div>
+<div class="watermark-r" data-cfg="streamer.guilde" data-cfg-show="streamer.guilde"></div>
+
+<div class="mini-info mini-tl" data-cfg="streamer.serveur">Ysondre — EU</div>
+<div class="mini-info mini-tr" data-cfg="streamer.contenu">Mythic+ / PvP</div>
+
+<!-- Center -->
+<div class="scene">
+  <div class="pause-icon">⏸ &nbsp; Pause &nbsp; ⏸</div>
+
+  <div class="pause-title">PAUSE</div>
+
+  <div class="deco-mid">
+    <div class="deco-mid-arm"></div>
+    <div class="deco-mid-gem"></div>
+    <div class="deco-mid-arm r"></div>
+  </div>
+
+  <div class="pause-sub" data-cfg="overlays.pause.sousTitre">De retour dans un instant…</div>
+  <div class="pause-msg" data-cfg="overlays.pause.message">Prends un verre, on revient vite !</div>
+
+  <div class="cards">
+    <div class="card card-timer">
+      <div class="card-inner">
+        <div class="card-label">Retour dans</div>
+        <div class="card-value" id="timerVal">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-label">Contenu du jour</div>
+        <div class="card-value" data-cfg="overlays.pause.contenuCarte">Mythic+</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-label">Streamer</div>
+        <div class="card-value" data-cfg="streamer.pseudo">TonPseudo</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-label">Serveur</div>
+        <div class="card-value" data-cfg="streamer.serveur">Ysondre EU</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Socials bar -->
+<div class="socials-bar">
+  <div class="social-item">
+    <span class="social-icon">🟣</span>
+    <span data-cfg="socials.twitch">twitch.tv/tonpseudo</span>
+  </div>
+  <div class="social-sep"></div>
+  <div class="social-item">
+    <span class="social-icon">💜</span>
+    <span data-cfg="socials.discord">discord.gg/tonserveur</span>
+  </div>
+  <div class="social-sep"></div>
+  <div class="social-item">
+    <span class="social-icon">🐦</span>
+    <span data-cfg="socials.twitter">@tonpseudo</span>
+  </div>
+  <div class="social-sep"></div>
+  <div class="social-item">
+    <span class="social-icon">📺</span>
+    <span data-cfg="socials.youtube">youtube.com/@tonpseudo</span>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="shared.js"></script>
+<script>
+// ── TIMER ALÉATOIRE BRB ──
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  let secs = parseInt(p.get('brb_secs') || '300'); // 5 min par défaut
+  const el = document.getElementById('timerVal');
+  
+  function fmt(s) {
+    if (s <= 0) return 'BIENTÔT';
+    const m = Math.floor(s / 60), ss = s % 60;
+    return m + ':' + String(ss).padStart(2, '0');
+  }
+
+  el.textContent = fmt(secs);
+  const t = setInterval(() => {
+    secs--;
+    el.textContent = fmt(secs);
+    if (secs <= 0) clearInterval(t);
+  }, 1000);
+})();
+</script>
+</body>
+</html>
