@@ -153,25 +153,86 @@
 .socials-bar {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  display: flex; align-items: center; justify-content: center;
-  gap: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background: rgba(0,0,0,0.75);
   border-top: 1px solid var(--border);
+
   animation: fadeIn 1s 1.3s both;
+
+  /* 🔥 clé pour éviter retour ligne */
+  overflow-x: auto;
+  white-space: nowrap;
 }
+
+/* ITEMS */
 .social-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 16px 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 16px 32px;
+
   font-family: var(--font-ui);
   font-size: 12px;
   letter-spacing: 2px;
-  color: var(--text-gold);
+
+  flex: 0 0 auto;
+
+  transition: 0.25s ease;
 }
+
+/* ICON */
+.social-icon {
+  display: flex;
+  width: 16px;
+  height: 16px;
+}
+
+.social-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* SEPARATOR */
 .social-sep {
-  width: 1px; height: 32px;
+  width: 1px;
+  height: 32px;
+  flex: 0 0 auto;
+
   background: linear-gradient(180deg, transparent, var(--border-mid), transparent);
 }
-.social-icon { font-size: 16px; }
+
+/* ===== COULEURS OFFICIELLES ===== */
+
+.social-item.twitch { color: #9146FF; }
+.social-item.discord { color: #5865F2; }
+.social-item.twitter { color: #ffffff; }
+.social-item.youtube { color: #FF0000; }
+
+.social-item.tiktok { color: #ffffff; }
+
+.social-item.tiktok svg {
+  filter: drop-shadow(2px 0 #25F4EE) drop-shadow(-2px 0 #FE2C55);
+}
+
+/* HOVER léger (propre) */
+.social-item:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* OPTION : cacher scrollbar */
+.socials-bar::-webkit-scrollbar {
+  display: none;
+}
+.socials-bar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* ── CORNER MINI CLOCKS ── */
 .mini-info {
@@ -207,11 +268,11 @@
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
 </div>
-<div class="watermark-l" data-cfg="streamer.pseudo">TonPseudo</div>
+<div class="watermark-l" data-cfg="streamer.pseudo"></div>
 <div class="watermark-r" data-cfg="streamer.guilde" data-cfg-show="streamer.guilde"></div>
 
-<div class="mini-info mini-tl" data-cfg="streamer.serveur">Ysondre — EU</div>
-<div class="mini-info mini-tr" data-cfg="streamer.contenu">Mythic+ / PvP</div>
+<div class="mini-info mini-tl" data-cfg="streamer.serveur"></div>
+<div class="mini-info mini-tr" data-cfg="streamer.contenu"></div>
 
 <!-- Center -->
 <div class="scene">
@@ -225,32 +286,32 @@
     <div class="deco-mid-arm r"></div>
   </div>
 
-  <div class="pause-sub" data-cfg="overlays.pause.sousTitre">De retour dans un instant…</div>
-  <div class="pause-msg" data-cfg="overlays.pause.message">Prends un verre, on revient vite !</div>
+  <div class="pause-sub" data-cfg="overlays.pause.sousTitre"></div>
+  <div class="pause-msg" data-cfg="overlays.pause.message"></div>
 
   <div class="cards">
     <div class="card card-timer">
       <div class="card-inner">
         <div class="card-label">Retour dans</div>
-        <div class="card-value" id="timerVal">—</div>
+        <div class="card-value" id="timerVal"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-inner">
         <div class="card-label">Contenu du jour</div>
-        <div class="card-value" data-cfg="overlays.pause.contenuCarte">Mythic+</div>
+        <div class="card-value" data-cfg="overlays.pause.contenuCarte"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-inner">
         <div class="card-label">Streamer</div>
-        <div class="card-value" data-cfg="streamer.pseudo">TonPseudo</div>
+        <div class="card-value" data-cfg="streamer.pseudo"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-inner">
         <div class="card-label">Serveur</div>
-        <div class="card-value" data-cfg="streamer.serveur">Ysondre EU</div>
+        <div class="card-value" data-cfg="streamer.serveur"></div>
       </div>
     </div>
   </div>
@@ -258,25 +319,52 @@
 
 <!-- Socials bar -->
 <div class="socials-bar">
-  <div class="social-item">
-    <span class="social-icon">🟣</span>
-    <span data-cfg="socials.twitch">twitch.tv/tonpseudo</span>
+
+  <div class="social-item twitch">
+    <span class="social-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2L2 6v14h5v2h3l2-2h3l5-5V2H4zm14 11l-3 3h-3l-2 2v-2H6V4h12v9z"/></svg>
+    </span>
+    <span data-cfg="socials.twitch"></span>
   </div>
+
   <div class="social-sep"></div>
-  <div class="social-item">
-    <span class="social-icon">💜</span>
-    <span data-cfg="socials.discord">discord.gg/tonserveur</span>
+
+  <div class="social-item discord">
+    <span class="social-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4a17 17 0 0 0-4-1l-.2.4a16 16 0 0 1 3.7 1.1c-3.5-1.6-7.4-1.6-10.9 0A16 16 0 0 1 12 3.4l-.2-.4a17 17 0 0 0-4 1A18 18 0 0 0 2 19a17 17 0 0 0 5 2.5l.4-.6c-1.6-.5-3-1.3-4.2-2.3.3.2.6.4.9.6 3.4 2 7.8 2 11.2 0 .3-.2.6-.4.9-.6-1.2 1-2.6 1.8-4.2 2.3l.4.6A17 17 0 0 0 22 19a18 18 0 0 0-2-15z"/></svg>
+    </span>
+    <span data-cfg="socials.discord"></span>
   </div>
+
   <div class="social-sep"></div>
-  <div class="social-item">
-    <span class="social-icon">🐦</span>
-    <span data-cfg="socials.twitter">@tonpseudo</span>
+
+  <div class="social-item twitter">
+    <span class="social-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h4l5 7 6-7h3l-8 9 9 12h-4l-6-8-7 8H2l9-10L3 3z"/></svg>
+    </span>
+    <span data-cfg="socials.twitter"></span>
   </div>
+
   <div class="social-sep"></div>
-  <div class="social-item">
-    <span class="social-icon">📺</span>
-    <span data-cfg="socials.youtube">youtube.com/@tonpseudo</span>
+
+  <div class="social-item youtube">
+    <span class="social-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7s-.2-1.7-.8-2.5c-.8-1-1.7-1-2.1-1.1C17.2 3 12 3 12 3s-5.2 0-8.1.4c-.4 0-1.3 0-2.1 1.1C1.2 5.3 1 7 1 7S1 9 1 11v2c0 2 0 4 0 4s.2 1.7.8 2.5c.8 1 1.9 1 2.4 1.1C6.8 21 12 21 12 21s5.2 0 8.1-.4c.4 0 1.3 0 2.1-1.1.6-.8.8-2.5.8-2.5s0-2 0-4v-2c0-2 0-4 0-4zM10 15V9l6 3-6 3z"/></svg>
+    </span>
+    <span data-cfg="socials.youtube"></span>
   </div>
+
+  <div class="social-sep"></div>
+
+  <div class="social-item tiktok">
+    <span class="social-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 3c.5 2.5 2 4 4 4v3c-1.5 0-3-.5-4-1.5V14a5 5 0 1 1-5-5c.3 0 .7 0 1 .1v3a2 2 0 1 0 2 2V3h2z"/>
+      </svg>
+    </span>
+    <span data-cfg="socials.tiktok"></span>
+  </div>
+
 </div>
 
 <script src="config.js"></script>
