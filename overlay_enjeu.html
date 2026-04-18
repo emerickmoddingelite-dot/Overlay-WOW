@@ -34,8 +34,6 @@
 }
 .hud-avatar {
   width: 42px; height: 42px;
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold-dim));
-  border: 1px solid var(--border-mid);
   display: flex; align-items: center; justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
@@ -141,23 +139,35 @@
 }
 
 .bottom-twitch {
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
   gap: 12px;
+
   background: rgba(0,0,0,0.82);
   border-top: 1px solid var(--border-mid);
   border-right: 1px solid var(--border);
+
   padding: 0 28px;
   min-width: 320px;
 }
+
+/* ICON FIX */
 .twitch-icon {
-  font-size: 18px;
-  filter: drop-shadow(0 0 6px rgba(145,71,255,0.6));
+  display: flex;
+  width: 18px;
+  height: 18px;
+  color: #9146FF; /* couleur officielle */
 }
+
+.twitch-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* TEXTE */
 .twitch-text {
   font-family: var(--font-ui);
-  font-size: 11px;
   letter-spacing: 2px;
-  color: var(--text-gold);
 }
 
 .bottom-commands {
@@ -258,12 +268,12 @@
   <div class="hud-nameplate">
     <div class="hud-avatar" style="padding:0;overflow:hidden;"><img src="https://i.ibb.co/LzQ5ggjZ/Draethon.png" alt="avatar" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
     <div>
-      <div class="hud-name" data-cfg="streamer.pseudo">TonPseudo</div>
-      <div class="hud-class" data-cfg="streamer.classe">Démoniste</div>
+      <div class="hud-name" data-cfg="streamer.pseudo"></div>
+      <div class="hud-class" data-cfg="streamer.classe"></div>
     </div>
   </div>
   <div class="hud-server">
-    <span data-cfg="streamer.serveur">Ysondre — EU</span>
+    <span data-cfg="streamer.serveur"></span>
   </div>
 </div>
 
@@ -272,33 +282,37 @@
   <div class="obj-panel">
     <div class="obj-header">
       <div class="obj-dot"></div>
-      <span class="obj-label" data-cfg="overlays.enjeu.objectifTitre">Objectif</span>
+      <span class="obj-label" data-cfg="overlays.enjeu.objectifTitre"></span>
     </div>
     <div class="obj-body">
-      <div class="obj-line1" data-cfg="overlays.enjeu.objectifLigne1">Mythic+ niveau 15</div>
-      <div class="obj-line2" data-cfg="overlays.enjeu.objectifLigne2">Donjon : Le Nid de Vipères</div>
+      <div class="obj-line1" data-cfg="overlays.enjeu.objectifLigne1"></div>
+      <div class="obj-line2" data-cfg="overlays.enjeu.objectifLigne2"></div>
     </div>
   </div>
 </div>
 
 <!-- BOTTOM BAR -->
 <div class="hud-bottom">
-  <div class="bottom-twitch">
-    <span class="twitch-icon">🟣</span>
-    <span class="twitch-text" data-cfg="socials.twitch">twitch.tv/tonpseudo</span>
-  </div>
+<div class="bottom-twitch">
+  <span class="twitch-icon">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 2L2 6v14h5v2h3l2-2h3l5-5V2H4zm14 11l-3 3h-3l-2 2v-2H6V4h12v9z"/>
+    </svg>
+  </span>
+  <span class="twitch-text" data-cfg="socials.twitch"></span>
+</div>
 
   <div class="bottom-commands">
-    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.0">!build</div>
-    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.1">!discord</div>
-    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.2">!social</div>
-    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.3">!commandes</div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.0"></div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.1"></div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.2"></div>
+    <div class="cmd-item" data-cfg="overlays.enjeu.commandes.3"></div>
   </div>
 
   <div class="bottom-server">
     <div class="server-text">
       <span class="server-name" data-cfg="streamer.guilde" data-cfg-show="streamer.guilde"></span>
-      <span data-cfg="streamer.serveur">Ysondre — EU</span>
+      <span data-cfg="streamer.serveur"></span>
     </div>
   </div>
 </div>
