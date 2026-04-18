@@ -21,7 +21,7 @@ const CONFIG = {
   socials: {
     twitch:   "",
     discord:  "",
-    twitter:  "@",
+    twitter:  "",
     youtube:  "",
     tiktok:   "",                       // Laisser vide pour masquer
   },
